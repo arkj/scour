@@ -3205,7 +3205,7 @@ def parse_args(args=None, ignore_additional_args=False):
    if options.outfilename:
       outfile = maybe_gziped_file(options.outfilename, "wb")
    else:
-      outfile = sys.stdout
+      outfile = None
 
    return options, [infile, outfile]
 
@@ -3255,12 +3255,16 @@ def start(options, input, output):
 
    # do the work
    in_string = input.read()
-   out_string = scourString(in_string, options).encode("UTF-8")
-   output.write(out_string)
-
-   # Close input and output files
    input.close()
-   output.close()
+   out_string = scourString(in_string, options)
+ 
+   # if given output file, write and close
+   if output:
+      output.write(out_string.encode('utf-8'))
+      output.close()
+   # otherwise print to stdout
+   else:
+      sys.stdout.write(out_string)
 
    end = get_tick()
 
