@@ -2783,9 +2783,10 @@ def serializeXML(element, options, ind = 0, preserveWhitespace = False):
       outParts.extend([' xml:id=', quot, id, quot])
 
    # now serialize the other attributes
-   attrList = element.attributes
-   for num in range(attrList.length) :
-      attr = attrList.item(num)
+   # enforce stable order by name sort
+   attrList = [element.attributes.item(i) for i in range(element.attributes.length)]
+   attrList = sorted(attrList, key=lambda i:i.nodeName)
+   for attr in attrList:
       if attr.nodeName == 'id' or attr.nodeName == 'xml:id': continue
       # if the attribute value contains a double-quote, use single-quotes
       quot = '"'
